@@ -24,7 +24,7 @@ public:
      * @param buf 
      * @return std::optional<Errcode> 
      */
-    virtual std::optional<Errcode>  Send(const bbt::buffer::Buffer& buf) final;
+    virtual std::optional<Errcode>  Send(const bbt::core::Buffer& buf) final;
 
     /**
      * @brief 关闭连接，当有输出缓存未发送成功会等待数据全部发送，但是无法继续发送数据
@@ -100,7 +100,7 @@ protected:
 
 private:
     virtual int                     Send(const char* byte, size_t len) override;
-    int                             _OnSendEvent(std::shared_ptr<bbt::buffer::Buffer> buffer, short event);
+    int                             _OnSendEvent(std::shared_ptr<bbt::core::Buffer> buffer, short event);
     int                             _AppendOutputBuffer(const char* data, size_t len);
     std::optional<Errcode>          _RegistASendEvent();
     std::optional<Errcode>          _RegistAMainEvent();
@@ -124,7 +124,7 @@ private:
     std::atomic_int64_t             m_send_event{-1};
     EventId                         m_main_event{-1};
 
-    bbt::buffer::Buffer             m_output_buffer;
+    bbt::core::Buffer               m_output_buffer;
     bool                            m_send_event_is_in_progress{false};  // 是否正在进行发送事件
     const int                       m_input_buffer_len{4096};
     char*                           m_input_buffer{nullptr};

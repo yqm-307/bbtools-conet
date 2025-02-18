@@ -15,7 +15,7 @@ public:
         conn->Run();
         bbtco [conn]{
             for (int i = 0; i < 10000; ++i) {
-                conn->Send(bbt::buffer::Buffer{"hello world"});
+                conn->Send(bbt::core::Buffer{"hello world"});
             }
 
             // conn->Close();

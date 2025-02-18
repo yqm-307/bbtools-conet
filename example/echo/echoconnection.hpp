@@ -1,5 +1,6 @@
 #pragma once
 #include <bbt/conet/conet.hpp>
+#include <bbt/base/clock/Clock.hpp>
 
 template<bool CanEcho>
 class EchoConn:
@@ -18,10 +19,13 @@ public:
 
     virtual void OnRecv(const char* byte, size_t len) override
     {
-        n_recv += len;
-        printf("[echoconn][onrecv] recv %ld bytes\n", len);
+        m_recv += len;
         if (CanEcho)
-            Send(bbt::buffer::Buffer{byte, len});
+            Send(bbt::core::Buffer{byte, len});
+        if (m_last_print_recv_time < bbt::clock::now<bbt::clock::seconds>().time_since_epoch().count())
+            return;
+        printf("[echoconn][onrecv] total recv %ld bytes\n", len);
+        m_last_print_recv_time = m_last_print_recv_time + 2;
     }
 
     virtual void OnTimeout() override
@@ -31,12 +35,16 @@ public:
 
     virtual void OnSend(size_t len) override
     {
-        printf("[echoconn][onsend] send %d bytes\n", len);
+        m_send += len;
+        if (m_last_print_send_time < bbt::clock::now<bbt::clock::seconds>().time_since_epoch().count())
+            return;
+        printf("[echoconn][onsend][%ld] total send %d bytes\n", GetId(), m_send);
+        m_last_print_send_time = m_last_print_send_time + 2;
     }
 
     virtual void OnClose() override
     {
-        printf("[echoconn][onclose] total recv=%ld\n", n_recv);
+        printf("[echoconn][onclose][%ld] total recv=%ld\n", GetId(), m_recv);
     }
 
     virtual void OnError(const bbt::network::Errcode& err) override
@@ -45,5 +53,8 @@ public:
         Close();
     }
 private:
-    size_t n_recv{0};
+    size_t m_recv{0};
+    size_t m_send{0};
+    int    m_last_print_recv_time{0};
+    int    m_last_print_send_time{0};
 };

@@ -121,7 +121,7 @@ void Connection::_Shutdown()
 }
 
 
-std::optional<Errcode> Connection::Send(const bbt::buffer::Buffer& buf)
+std::optional<Errcode> Connection::Send(const bbt::core::Buffer& buf)
 {
     std::unique_lock<std::mutex> lock{m_mutex};
     if (IsClosed()) {
@@ -140,7 +140,7 @@ std::optional<Errcode> Connection::Send(const bbt::buffer::Buffer& buf)
     return _RegistASendEvent();
 }
 
-int Connection::_OnSendEvent(std::shared_ptr<bbt::buffer::Buffer> buffer, short event)
+int Connection::_OnSendEvent(std::shared_ptr<bbt::core::Buffer> buffer, short event)
 {
     size_t len = 0;
     bool continue_send = false;
@@ -201,7 +201,7 @@ std::optional<Errcode> Connection::_RegistASendEvent()
     AssertWithInfo(!m_send_event_is_in_progress, "output buffer must be free!");
     AssertWithInfo(m_send_event <= 0, "must no send event!");
 
-    auto buffer_sptr = std::make_shared<bbt::buffer::Buffer>();
+    auto buffer_sptr = std::make_shared<bbt::core::Buffer>();
     buffer_sptr->Swap(m_output_buffer);
 
     auto pthis = shared_from_this();

@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(t_connection_send_recv)
         if (err != std::nullopt)
             BOOST_ERROR(err->What());
 
-        err = conn->Send(bbt::buffer::Buffer{msg});
+        err = conn->Send(bbt::core::Buffer{msg});
         if (err != std::nullopt)
             BOOST_ERROR(err->What());
 
