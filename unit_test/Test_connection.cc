@@ -2,7 +2,7 @@
 #define BOOST_TEST_MAIN
 #include <boost/test/included/unit_test.hpp>
 #include <bbt/conet/conet.hpp>
-#include <bbt/base/net/SocketUtil.hpp>
+#include <bbt/core/net/SocketUtil.hpp>
 
 using namespace bbt::network::conet;
 
@@ -41,12 +41,12 @@ BOOST_AUTO_TEST_CASE(t_begin)
 BOOST_AUTO_TEST_CASE(t_connection_send_recv)
 {
 
-    bbt::thread::CountDownLatch l{2};
+    bbt::core::thread::CountDownLatch l{2};
 
     bbtco_desc("server") [&l]()
     {
         BOOST_TEST_MESSAGE("[server] server co=" << bbt::coroutine::GetLocalCoroutineId());
-        int fd = bbt::net::Util::CreateListen("", 10001, true);
+        int fd = bbt::core::net::Util::CreateListen("", 10001, true);
         BOOST_ASSERT(fd >= 0);
         BOOST_TEST_MESSAGE("[server] create succ listen fd=" << fd);
         sockaddr_in cli_addr;

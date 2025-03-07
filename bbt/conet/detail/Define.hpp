@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
-#include <bbt/base/net/IPAddress.hpp>
-#include <bbt/base/buffer/Buffer.hpp>
+#include <bbt/core/net/IPAddress.hpp>
+#include <bbt/core/buffer/Buffer.hpp>
 #include <bbt/coroutine/coroutine.hpp>
 #include <bbt/network/Errcode.hpp>
 #include <bbt/coroutine/utils/lockfree/concurrentqueue.h>
@@ -46,7 +46,7 @@ typedef std::function<bool(std::shared_ptr<interface::IConnection>, short)> OnDi
 }
 
 
-typedef bbt::net::IPAddress IPAddress;
+typedef bbt::core::net::IPAddress IPAddress;
 
 typedef std::function<void()> CoPoolWorkCallback;
 

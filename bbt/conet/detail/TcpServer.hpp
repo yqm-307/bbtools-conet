@@ -52,7 +52,7 @@ private:
     std::weak_ptr<TIEventLoop>      m_event_loop;
     const IPAddress                 m_listen_addr;
     volatile bool                   m_is_running{true};
-    bbt::thread::CountDownLatch*    m_latch;
+    bbt::core::thread::CountDownLatch*    m_latch;
 
 };
 

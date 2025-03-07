@@ -19,7 +19,8 @@ file(GLOB_RECURSE SRCS
 add_library(bbt_conet SHARED ${SRCS})
 
 target_link_libraries(bbt_conet
-    -lbbt_coroutine
+    bbt_core
+    bbt_coroutine
 )
 
 enable_testing()

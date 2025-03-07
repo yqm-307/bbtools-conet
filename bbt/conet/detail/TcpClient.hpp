@@ -8,7 +8,7 @@ namespace bbt::network::conet::detail
 class TcpClient
 {
 public:
-    typedef std::pair<std::optional<Errcode>, std::shared_ptr<interface::IConnection>> ConnectResult;
+    typedef ErrTuple<std::shared_ptr<interface::IConnection>> ConnectResult;
 
     explicit TcpClient(std::shared_ptr<TIEventLoop> eventloop):m_event_loop(eventloop) {}
     virtual ~TcpClient() {}

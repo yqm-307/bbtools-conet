@@ -23,23 +23,31 @@ BOOST_AUTO_TEST_CASE(t_event_notify)
         return false;
     });
 
-    std::this_thread::sleep_for(bbt::clock::ms(200));
+    std::this_thread::sleep_for(bbt::core::clock::ms(200));
     BOOST_CHECK(flag == 1);
 }
 
 BOOST_AUTO_TEST_CASE(t_cancel_event)
 {
-    auto id = eventloop->RegistEvent(nullptr, bbtco_emev_timeout, 100, [&](auto null, short ev){
-        BOOST_ASSERT(false);
-        return false;
-    });
 
-    BOOST_ASSERT(id > 0);
+    bbt::core::thread::CountDownLatch latch{1};
 
-    BOOST_ASSERT(eventloop->UnRegistEvent(id) == 0);
-    BOOST_ASSERT(eventloop->UnRegistEvent(id) == -1);
-    std::this_thread::sleep_for(bbt::clock::ms(200));
-    BOOST_ASSERT(eventloop->UnRegistEvent(id) == -1);
+    bbtco [&](){
+        auto id = eventloop->RegistEvent(nullptr, bbtco_emev_timeout, 100, [&](auto null, short ev){
+            BOOST_ASSERT(false);
+            return false;
+        });
+    
+        BOOST_ASSERT(id > 0);
+    
+        BOOST_ASSERT(eventloop->UnRegistEvent(id) == 0);
+        BOOST_ASSERT(eventloop->UnRegistEvent(id) == -1);
+        bbtco_sleep(200);
+        BOOST_ASSERT(eventloop->UnRegistEvent(id) == -1);
+        latch.Down();
+    };
+
+    latch.Wait();
 }
 
 BOOST_AUTO_TEST_CASE(t_end)

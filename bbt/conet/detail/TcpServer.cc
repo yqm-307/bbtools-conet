@@ -1,5 +1,5 @@
 #include <bbt/conet/detail/TcpServer.hpp>
-#include <bbt/base/net/SocketUtil.hpp>
+#include <bbt/core/net/SocketUtil.hpp>
 
 namespace bbt::network::conet::detail
 {
@@ -34,7 +34,7 @@ void TcpServer::Stop(bool sync)
         return;
 
     if (sync)
-        m_latch = new bbt::thread::CountDownLatch{1};
+        m_latch = new bbt::core::thread::CountDownLatch{1};
 
     m_is_running = false;
 
@@ -48,7 +48,7 @@ void TcpServer::_ListenCo()
      * 监听协程主函数
      */
 
-    int listenfd = bbt::net::Util::CreateListen(m_listen_addr.GetIP().c_str(), m_listen_addr.GetPort(), true);
+    int listenfd = bbt::core::net::Util::CreateListen(m_listen_addr.GetIP().c_str(), m_listen_addr.GetPort(), true);
 
     if (listenfd < 0) {
         OnError(Errcode{"tcp server listen failed! ip=" + m_listen_addr.GetIPPort() + " errno=" + std::to_string(errno), network::ErrType::ERRTYPE_ERROR});

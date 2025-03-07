@@ -38,6 +38,6 @@ int main()
 
     while (true) {
         client.CoConnect("127.0.0.1", 10101);
-        std::this_thread::sleep_for(bbt::clock::ms(100));
+        std::this_thread::sleep_for(bbt::core::clock::ms(100));
     }
 }

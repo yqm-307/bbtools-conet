@@ -29,19 +29,18 @@ TcpClient::ConnectResult TcpClient::_ConnectCo(const std::string& ip, short port
     IPAddress addr{ip, port};
     int socket = ::socket(AF_INET, SOCK_STREAM, 0);
     if (socket < 0)
-        return {Errcode{"tcpclient socket() error! errno=" + std::to_string(errno)}, nullptr};
+        return {Errcode{"tcpclient socket() error! errno=" + std::to_string(errno), ErrType::ERRTYPE_ERROR}, nullptr};
     
     int err = ::connect(socket, addr.getsockaddr(), addr.getsocklen());
     if (err != 0) {
-        Errcode err{""};
+        ::close(socket);
         if (errno == EINTR || errno == EINPROGRESS)
-            err = Errcode{"try again", ErrType::ERRTYPE_CONNECT_TRY_AGAIN};
+            return {Errcode{"try again", ErrType::ERRTYPE_CONNECT_TRY_AGAIN}, nullptr};
 
         if (errno == ECONNREFUSED)
-            err = Errcode{"connect refused", ErrType::ERRTYPE_CONNECT_CONNREFUSED};
+            return {Errcode{"connect refused", ErrType::ERRTYPE_CONNECT_CONNREFUSED}, nullptr};
         
-        ::close(socket);
-        return {err, nullptr};
+        return {std::nullopt, nullptr};
     }
 
     return OnConnect(socket, addr);

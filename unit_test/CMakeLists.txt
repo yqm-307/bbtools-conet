@@ -7,11 +7,11 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin/unit_test)
 set(MY_LIBS
     libboost_unit_test_framework.so
     libboost_test_exec_monitor.so
+    bbt_core
     bbt_coroutine
     bbt_conet
     event_core
     event_pthreads
-    ybbt
 )
 
 

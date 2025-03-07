@@ -24,7 +24,7 @@ public:
      * @param buf 
      * @return std::optional<Errcode> 
      */
-    virtual std::optional<Errcode>  Send(const bbt::core::Buffer& buf) final;
+    virtual ErrOpt                  Send(const bbt::core::Buffer& buf) final;
 
     /**
      * @brief 关闭连接，当有输出缓存未发送成功会等待数据全部发送，但是无法继续发送数据
@@ -117,7 +117,7 @@ private:
     int                             m_socket{-1};
     IPAddress                       m_peer_addr;
     const int                       m_timeout{-1};  // 连接空闲关闭超时
-    bbt::clock::Timestamp<>         m_last_active_time;
+    bbt::core::clock::Timestamp<>   m_last_active_time;
     std::atomic_int                 m_run_status{CONN_DEFAULT};
     std::mutex                      m_mutex;    // 状态管理的锁
 
