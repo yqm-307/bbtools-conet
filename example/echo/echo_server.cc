@@ -22,6 +22,7 @@ public:
 
     virtual void OnClose() override
     {
+        EchoConn<true>::OnClose();
         std::unique_lock<std::mutex> _(m_conn_mgr_mtx);
         Assert(m_conn_mgr.erase(GetId()) > 0);
     }

@@ -2,6 +2,8 @@
 #include <bbt/conet/conet.hpp>
 #include <bbt/core/clock/Clock.hpp>
 
+using namespace bbt::core;
+
 template<bool CanEcho>
 class EchoConn:
     public bbt::conet::detail::Connection
@@ -21,16 +23,17 @@ public:
     {
         m_recv += len;
         if (CanEcho)
-            Send(bbt::core::Buffer{byte, len});
+            if (auto err = Send(bbt::core::Buffer{byte, len}); err.has_value())
+                OnError(err.value());
         if (m_last_print_recv_time < bbt::core::clock::now<bbt::core::clock::seconds>().time_since_epoch().count())
             return;
-        printf("[echoconn][onrecv] total recv %ld bytes\n", len);
+        printf("%s[echoconn][onrecv] total recv %ld bytes\n", clock::getnow_str().c_str(), len);
         m_last_print_recv_time = m_last_print_recv_time + 2;
     }
 
     virtual void OnTimeout() override
     {
-        printf("[echoconn][ontimeout] timeout!\n");
+        printf("%s[echoconn][ontimeout][%ld] timeout!\n", clock::getnow_str().c_str(), GetId());
     }
 
     virtual void OnSend(size_t len) override
@@ -38,18 +41,18 @@ public:
         m_send += len;
         if (m_last_print_send_time < bbt::core::clock::now<bbt::core::clock::seconds>().time_since_epoch().count())
             return;
-        printf("[echoconn][onsend][%ld] total send %d bytes\n", GetId(), m_send);
+        printf("%s[echoconn][onsend][%ld] total send %d bytes\n", clock::getnow_str().c_str(), GetId(), m_send);
         m_last_print_send_time = m_last_print_send_time + 2;
     }
 
     virtual void OnClose() override
     {
-        printf("[echoconn][onclose][%ld] total recv=%ld\n", GetId(), m_recv);
+        printf("%s[echoconn][onclose][%ld] total recv=%ld total send=%ld\n", clock::getnow_str().c_str(), GetId(), m_recv, m_send);
     }
 
     virtual void OnError(const bbt::network::Errcode& err) override
     {
-        printf("[echoconn][onerror] %s\n", err.CWhat());
+        printf("%s[echoconn][onerror] %s\n", clock::getnow_str().c_str(), err.CWhat());
         Close();
     }
 private:

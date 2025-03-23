@@ -5,6 +5,14 @@
 namespace bbt::network::conet::detail
 {
 
+/**
+ * @brief 连接对象
+ * 
+ * 连接建立后，会有两个协程：
+ *  1、主协程：负责监听连接事件，超时事件，关闭事件
+ *  2、发送协程：负责发送事件（可以通过协程池做，一般发送不太容易阻塞很久）
+ * 
+ */
 class Connection:
     public interface::IConnection,
     public std::enable_shared_from_this<Connection>
@@ -14,7 +22,9 @@ public:
     virtual ~Connection();
 
     /**
-     * 启动连接接收、超时事件
+     * @brief 在EventLoop中运行连接，开启网络事件
+     * 
+     * @return std::optional<Errcode>
      */
     std::optional<Errcode>          Run();
 
@@ -103,16 +113,14 @@ private:
     int                             _OnSendEvent(std::shared_ptr<bbt::core::Buffer> buffer, short event);
     int                             _AppendOutputBuffer(const char* data, size_t len);
     std::optional<Errcode>          _RegistASendEvent();
-    std::optional<Errcode>          _RegistAMainEvent();
-    std::shared_ptr<EventLoop>      _GetEventLoop();
     void                            _Shutdown();
-    bool                            _OnMainEvent(short event);
+    void                            _OnMainEvent();
 
     /* 连接事件 */
     std::optional<Errcode>          _Recv();
     static int64_t                  _GenId();
 private:
-    std::weak_ptr<TIEventLoop>      m_event_loop;
+    std::shared_ptr<TIEventLoop>    m_event_loop{nullptr};
     const int64_t                   m_conn_id{-1};
     int                             m_socket{-1};
     IPAddress                       m_peer_addr;
@@ -122,7 +130,6 @@ private:
     std::mutex                      m_mutex;    // 状态管理的锁
 
     std::atomic_int64_t             m_send_event{-1};
-    EventId                         m_main_event{-1};
 
     bbt::core::Buffer               m_output_buffer;
     bool                            m_send_event_is_in_progress{false};  // 是否正在进行发送事件

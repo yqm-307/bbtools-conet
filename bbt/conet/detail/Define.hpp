@@ -7,13 +7,14 @@
 #include <bbt/coroutine/utils/lockfree/concurrentqueue.h>
 #include <bbt/conet/detail/interface/IConnection.hpp>
 #include <bbt/conet/detail/interface/IEventLoop.hpp>
-#include <bbt/conet/detail/interface/IService.hpp>
 
 namespace bbt::network::conet
 {
 
 namespace detail
 {
+
+#define BBT_CONET_MODULE_NAME "[bbt::conet]"
 
 class Connection; 
 class TcpClient;

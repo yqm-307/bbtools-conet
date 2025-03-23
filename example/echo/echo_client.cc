@@ -12,7 +12,8 @@ public:
     virtual ConnectResult OnConnect(int socket, const bbt::conet::IPAddress& addr)
     {
         auto conn = std::make_shared<EchoConn<false>>(GetEventLoop(), socket, addr, 1000);
-        conn->Run();
+        printf("%s[client][onconnect][%ld]\n", clock::getnow_str().c_str(), conn->GetId());
+        bbtco [conn](){ conn->Run(); };
         bbtco [conn]{
             for (int i = 0; i < 10000; ++i) {
                 conn->Send(bbt::core::Buffer{"hello world"});
@@ -38,6 +39,6 @@ int main()
 
     while (true) {
         client.CoConnect("127.0.0.1", 10101);
-        std::this_thread::sleep_for(bbt::core::clock::ms(100));
+        std::this_thread::sleep_for(bbt::core::clock::ms(10));
     }
 }
